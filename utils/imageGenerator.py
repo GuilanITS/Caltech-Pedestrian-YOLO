@@ -16,7 +16,11 @@ def save_img(dname, fn, i, frame):
         os.path.basename(fn).split('.')[0], i), frame)
 
 
-def convert(dir):
+def square(fileName):
+    return
+
+
+def convert(dir, squared: bool = False):
     for dname in sorted(glob.glob(dir)):
         for fn in sorted(glob.glob('{}/*.seq'.format(dname))):
             cap = cv.VideoCapture(fn)
@@ -25,6 +29,8 @@ def convert(dir):
                 ret, frame = cap.read()
                 if not ret:
                     break
+                if (squared):
+                    square()
                 save_img(dname, fn, i, frame)
                 i += 1
             print(fn)
