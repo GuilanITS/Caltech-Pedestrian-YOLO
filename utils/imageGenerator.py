@@ -40,3 +40,5 @@ convert(inputDirectory)
 
 
 # https://github.com/simonzachau/caltech-pedestrian-dataset-to-yolo-format-converter/blob/master/generate-images.py
+
+# https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/tests/test_plot_annotations.py

@@ -2,17 +2,22 @@ import os
 import glob
 from scipy.io import loadmat
 
+caltechAnnotationsDirectory = 'E:/Datasets/Dataset 19 - Caltech/annotations'
+generatedAnnotationsDirectory = 'E:/Datasets/Dataset 19 - Caltech/generated_annotations'
+generatedImagesDirectory = 'E:/Datasets/Dataset 19 - Caltech/set00_images'
 
 classes = ['person', 'people']  # others are 'person-fa' and 'person?'
-squared = True
+squared = False
 frame_size = (640, 640) if squared else (640, 480)
 number_of_truth_boxes = 0
+
 datasets = {
     'train': open('train' + ('_squared' if squared else '') + '.txt', 'w'),
     'test': open('test' + ('_squared' if squared else '') + '.txt', 'w')
 }
-if not os.path.exists('labels'):
-    os.makedirs('labels')
+
+if not os.path.exists(generatedAnnotationsDirectory):
+    os.makedirs(generatedAnnotationsDirectory)
 
 
 def convertBoxFormat(box):
@@ -28,11 +33,10 @@ def convertBoxFormat(box):
 
 
 # traverse sets
-for caltech_set in sorted(glob.glob('../caltech/annotations/set*')):
+for caltech_set in sorted(glob.glob(f'{caltechAnnotationsDirectory}/set*')):
     set_nr = os.path.basename(caltech_set).replace('set', '')
     dataset = 'train' if int(set_nr) < 6 else 'test'
     set_id = dataset + set_nr
-
     # traverse videos
     for caltech_annotation in sorted(glob.glob(caltech_set + '/*.vbb')):
         vbb = loadmat(caltech_annotation)
@@ -63,8 +67,8 @@ for caltech_set in sorted(glob.glob('../caltech/annotations/set*')):
 
                 image_id = set_id + '_' + video_id + '_' + str(frame_id)
                 datasets[dataset].write(
-                    os.getcwd() + '/images/' + image_id + ('_squared' if squared else '') + '.png\n')
-                label_file = open('labels/' + image_id +
+                    generatedImagesDirectory + '/' + image_id + ('_squared' if squared else '') + '.png\n')
+                label_file = open(f'{generatedAnnotationsDirectory}/' + image_id +
                                   ('_squared' if squared else '') + '.txt', 'w')
                 label_file.write(labels)
                 label_file.close()
@@ -73,7 +77,5 @@ for caltech_set in sorted(glob.glob('../caltech/annotations/set*')):
 
 for dataset in datasets.values():
     dataset.close()
-print(number_of_truth_boxes)  # useful for statistics
 
-
-# https://github.com/simonzachau/caltech-pedestrian-dataset-to-yolo-format-converter/blob/master/generate-annotation.py
+print(number_of_truth_boxes)
