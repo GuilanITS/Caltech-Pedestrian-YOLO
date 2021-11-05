@@ -48,3 +48,5 @@ for set_name in sorted(img_fns.keys()):
         wri.release()
         print(set_name, video_name)
 print(n_objects)
+
+# https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/tests/test_plot_annotations.py

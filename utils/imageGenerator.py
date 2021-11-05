@@ -6,10 +6,14 @@ from logger import logger
 from config import caltechDataDir, imageFormat, genImagesDir
 
 
-def saveImage(frame, dname, fn, i):
-    cv.imwrite('{}/{}_{}_{}.png'.format(
-        genImagesDir, os.path.basename(dname),
-        os.path.basename(fn).split('.')[0], i), frame)
+def saveImage(frame, folderName, fileName, counter):
+    destFolder = genImagesDir + '/' + folderName
+    try:
+        cv.imwrite(os.path.join(
+            destFolder, f'{fileName}_{counter}.{imageFormat}'), frame)
+    except cv.error as openCVError:
+        errorText = str(openCVError)
+        logger(f'Error while creating image ({errorText})', logLevel="error")
 
 
 def imageGenerator():
@@ -29,7 +33,6 @@ def imageGenerator():
     if not os.path.exists(genImagesDir):
         os.makedirs(genImagesDir)
     # Processing .seq files
-    print(seqFiles)
     for seqFile in seqFiles:
         counter = 0
         startTime = time.time()
@@ -37,6 +40,9 @@ def imageGenerator():
         fileName = os.path.basename(seqFile).split('.')[0]
         # Grabs the parent directory of .seq file, e.g. set001
         parentDirtName = os.path.basename(os.path.dirname(seqFile))
+        parentFolderDir = genImagesDir + '/' + parentDirtName  # e.g. genImages/set001
+        if not os.path.exists(parentFolderDir):
+            os.makedirs(parentFolderDir)
         try:
             capture = cv.VideoCapture(seqFile)
             while True:
@@ -45,7 +51,7 @@ def imageGenerator():
                 if not existed:
                     break
                 # Saving image
-                saveImage(frame, parentDirtName)
+                saveImage(frame, parentDirtName, fileName, counter)
                 # Create a log every 25 passed
                 if (counter % 100 == 0):
                     print(f'Processing file #{counter} in {fileName}')
@@ -56,33 +62,3 @@ def imageGenerator():
         except Exception as error:
             errorText = str(error)
             logger(f'Error while processing ({errorText})', logLevel="error")
-
-
-# def save_img(dname, fn, i, frame):
-#     cv.imwrite('{}/{}_{}_{}.png'.format(
-#         outputDirectory, os.path.basename(dname),
-#         os.path.basename(fn).split('.')[0], i), frame)
-
-
-# def convert(dir, squared: bool = False):
-#     for dname in sorted(glob.glob(dir)):
-#         for fn in sorted(glob.glob('{}/*.seq'.format(dname))):
-#             cap = cv.VideoCapture(fn)
-#             i = 0
-#             while True:
-#                 ret, frame = cap.read()
-#                 if not ret:
-#                     break
-#                 if (squared):
-#                     square()
-#                 save_img(dname, fn, i, frame)
-#                 i += 1
-#             print(fn)
-
-
-# convert(inputDirectory)
-
-
-# https://github.com/simonzachau/caltech-pedestrian-dataset-to-yolo-format-converter/blob/master/generate-images.py
-
-# https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/tests/test_plot_annotations.py
