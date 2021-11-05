@@ -5,7 +5,7 @@ import glob
 import cv2 as cv
 from collections import defaultdict
 
-outputDirectory = 'E:\Datasets\Dataset 19 - Caltech\set00_images'
+generatedImagesDirectory = 'E:/Datasets/Dataset 19 - Caltech/set00_images'
 annotations = json.load(open('data/annotations.json'))
 
 out_dir = 'data/plots'
@@ -14,16 +14,16 @@ if not os.path.exists(out_dir):
 
 img_fns = defaultdict(dict)
 
-for fn in sorted(glob.glob('data/images/*.png')):
+for fn in sorted(glob.glob(f'{generatedImagesDirectory}/*.png')):
     set_name = re.search('(set[0-9]+)', fn).groups()[0]
     img_fns[set_name] = defaultdict(dict)
 
-for fn in sorted(glob.glob('data/images/*.png')):
+for fn in sorted(glob.glob(f'{generatedImagesDirectory}/*.png')):
     set_name = re.search('(set[0-9]+)', fn).groups()[0]
     video_name = re.search('(V[0-9]+)', fn).groups()[0]
     img_fns[set_name][video_name] = []
 
-for fn in sorted(glob.glob('data/images/*.png')):
+for fn in sorted(glob.glob(f'{generatedImagesDirectory}/*.png')):
     set_name = re.search('(set[0-9]+)', fn).groups()[0]
     video_name = re.search('(V[0-9]+)', fn).groups()[0]
     n_frame = re.search('_([0-9]+)\.png', fn).groups()[0]
