@@ -2,9 +2,9 @@ import os
 import glob
 from scipy.io import loadmat
 
-caltechAnnotationsDirectory = 'E:/Datasets/Dataset 19 - Caltech/annotations'
-generatedAnnotationsDirectory = 'E:/Datasets/Dataset 19 - Caltech/generated_annotations'
-generatedImagesDirectory = 'E:/Datasets/Dataset 19 - Caltech/set00_images'
+caltechLabelsDir = 'E:/Datasets/Dataset 19 - Caltech/annotations'
+genLabelsDir = 'E:/Datasets/Dataset 19 - Caltech/generated_annotations'
+genImagesDir = 'E:/Datasets/Dataset 19 - Caltech/set00_images'
 
 classes = ['person', 'people']  # others are 'person-fa' and 'person?'
 squared = False
@@ -16,8 +16,8 @@ datasets = {
     'test': open('test' + ('_squared' if squared else '') + '.txt', 'w')
 }
 
-if not os.path.exists(generatedAnnotationsDirectory):
-    os.makedirs(generatedAnnotationsDirectory)
+if not os.path.exists(genLabelsDir):
+    os.makedirs(genLabelsDir)
 
 
 def convertBoxFormat(box):
@@ -33,7 +33,7 @@ def convertBoxFormat(box):
 
 
 # traverse sets
-for caltech_set in sorted(glob.glob(f'{caltechAnnotationsDirectory}/set*')):
+for caltech_set in sorted(glob.glob(f'{caltechLabelsDir}/set*')):
     set_nr = os.path.basename(caltech_set).replace('set', '')
     dataset = 'train' if int(set_nr) < 6 else 'test'
     set_id = dataset + set_nr
@@ -67,8 +67,8 @@ for caltech_set in sorted(glob.glob(f'{caltechAnnotationsDirectory}/set*')):
 
                 image_id = set_id + '_' + video_id + '_' + str(frame_id)
                 datasets[dataset].write(
-                    generatedImagesDirectory + '/' + image_id + ('_squared' if squared else '') + '.png\n')
-                label_file = open(f'{generatedAnnotationsDirectory}/' + image_id +
+                    genImagesDir + '/' + image_id + ('_squared' if squared else '') + '.png\n')
+                label_file = open(f'{genLabelsDir}/' + image_id +
                                   ('_squared' if squared else '') + '.txt', 'w')
                 label_file.write(labels)
                 label_file.close()
