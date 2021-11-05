@@ -1,6 +1,8 @@
 import logging
 from logger import logger
 from PyInquirer import prompt
+from utils.imageGenerator import imageGenerator
+
 
 modules = ['Image Generator']
 
@@ -26,7 +28,7 @@ def __init__():
     # Getting inputs from users
     userInputs = getUserInput()['Action']
     if userInputs == 'Image Generator':
-        print('Image Generator')
+        imageGenerator()
 
 
 __init__()
