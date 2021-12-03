@@ -53,7 +53,9 @@ def annotationGenerator():
         parentDirtName = os.path.basename(os.path.dirname(vbbFile))
         setId = parentDirtName.replace('set', '')  # e.g., 001
         datasetId = 'train' if int(setId) < 6 else 'test'
-        parentFolderDir = genLabelsDir + '/' + parentDirtName  # e.g. genAnnots/set001
+        print(f'Processing {fileName} in set{setId}... ({datasetId} data)')
+        parentFolderDir = genLabelsDir + '/' + \
+            parentDirtName  # e.g. E:/genAnnots/set001
         if not os.path.exists(parentFolderDir):
             os.makedirs(parentFolderDir)
         # Processing .vbb file
@@ -86,8 +88,8 @@ def annotationGenerator():
                         f'{genImagesDir}/{parentDirtName}/{imageId}\n')
                     # Writing labels to file
                     filePath = parentFolderDir + '/' + \
-                        fileName + '_' + str(frameId) + '.txt'
-                    labelFile = open(f'{genLabelsDir}/' + filePath, 'w')
+                        fileName + '_frame' + str(frameId) + '.txt'
+                    labelFile = open(filePath, 'w')
                     labelFile.write(labels)
                     labelFile.close()
         except Exception as error:
@@ -100,49 +102,3 @@ def annotationGenerator():
     elapsedTime = '{:.2f}'.format(time.time() - startTime)
     logger(
         f'Generated annotations for {vbbFile} in {elapsedTime}s!')
-
-# # traverse sets
-# for caltech_set in sorted(glob.glob(f'{caltechLabelsDir}/set*')):
-#     set_nr = os.path.basename(caltech_set).replace('set', '')
-#     dataset = 'train' if int(set_nr) < 6 else 'test'
-#     set_id = dataset + set_nr
-#     # traverse videos
-#     for caltech_annotation in sorted(glob.glob(caltech_set + '/*.vbb')):
-#         vbb = loadmat(caltech_annotation)
-#         obj_lists = vbb['A'][0][0][1][0]
-#         obj_lbl = [str(v[0]) for v in vbb['A'][0][0][4][0]]
-#         video_id = os.path.splitext(os.path.basename(caltech_annotation))[0]
-
-#         # traverse frames
-#         for frame_id, obj in enumerate(obj_lists):
-#             if len(obj) > 0:
-
-#                 # traverse labels
-#                 labels = ''
-#                 for pedestrian_id, pedestrian_pos in zip(obj['id'][0], obj['pos'][0]):
-#                     pedestrian_id = int(pedestrian_id[0][0]) - 1
-#                     pedestrian_pos = pedestrian_pos[0].tolist()
-#                     # class filter and height filter: here example for medium distance
-#                     if obj_lbl[pedestrian_id] in classes and pedestrian_pos[3] > 30 and pedestrian_pos[3] <= 80:
-#                         class_index = classes.index(obj_lbl[pedestrian_id])
-#                         yolo_box_format = convertBoxFormat(pedestrian_pos)
-#                         labels += str(class_index) + ' ' + \
-#                             ' '.join([str(n) for n in yolo_box_format]) + '\n'
-#                         number_of_truth_boxes += 1
-
-#                 # if no suitable labels left after filtering, continue
-#                 if not labels:
-#                     continue
-
-#                 image_id = set_id + '_' + video_id + '_' + str(frame_id)
-#                 datasets[dataset].write(genImagesDir + '/' + image_id + ('_squared' if squared else '') + '.png\n')
-#                 label_file = open(f'{genLabelsDir}/' + image_id + ('_squared' if squared else '') + '.txt', 'w')
-#                 label_file.write(labels)
-#                 label_file.close()
-
-#                 print('finished ' + image_id)
-
-# for dataset in datasets.values():
-#     dataset.close()
-
-# print(number_of_truth_boxes)
