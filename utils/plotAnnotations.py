@@ -15,6 +15,7 @@ def annotationPlotter():
     logger('Annotation plotter started!')
     # Initialization
     startTime = time.time()
+    plotDict = defaultdict(dict)
     # Check if the paths are not empty
     if not os.path.exists(genImagesDir) or not os.listdir(genImagesDir):
         logger('The path to the images is empty or does not exist!', logLevel="error")
@@ -26,22 +27,16 @@ def annotationPlotter():
     # Creating the output folder if it doesn't exist
     if not os.path.exists(genPlotsDir):
         os.makedirs(genPlotsDir)
+    # Get the list of sets
+    for set in sorted(glob.glob(f'{genImagesDir}/*')):
+        # Get the folders (sets) containing PNG images
+        setName = os.path.basename(set)
+        # Updating plot to {'set00': {...}, 'set01': {...}}
+        plotDict[setName] = defaultdict(dict)
+    print(plotDict)
     # Finalization
     elapsedTime = '{:.2f}'.format(time.time() - startTime)
     logger(f'Annotations plotted in {elapsedTime}s!')
-
-# genImagesDir = 'E:/Datasets/Dataset 19 - Caltech/set00_images'
-# annotations = json.load(open('data/annotations.json'))
-
-# out_dir = 'data/plots'
-# if not os.path.exists(out_dir):
-#     os.makedirs(out_dir)
-
-# img_fns = defaultdict(dict)
-
-# for fn in sorted(glob.glob(f'{genImagesDir}/*.png')):
-#     set_name = re.search('(set[0-9]+)', fn).groups()[0]
-#     img_fns[set_name] = defaultdict(dict)
 
 # for fn in sorted(glob.glob(f'{genImagesDir}/*.png')):
 #     set_name = re.search('(set[0-9]+)', fn).groups()[0]
