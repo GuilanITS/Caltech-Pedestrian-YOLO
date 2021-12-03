@@ -2,10 +2,11 @@ import logging
 from logger import logger
 from PyInquirer import prompt
 from utils.imageGenerator import imageGenerator
+from utils.plotAnnotations import annotationPlotter
 from utils.annotationGenerator import annotationGenerator
 
 
-modules = ['Image Generator', 'Annotation Generator']
+modules = ['Image Generator', 'Annotation Generator', 'Annotation Plotter']
 
 
 # Receives input from user by command line
@@ -32,6 +33,8 @@ def __init__():
         imageGenerator()
     elif userInputs == 'Annotation Generator':
         annotationGenerator()
+    elif userInputs == 'Annotation Plotter':
+        annotationPlotter()
 
 
 __init__()

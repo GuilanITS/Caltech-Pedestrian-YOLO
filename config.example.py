@@ -11,3 +11,6 @@ genImagesDir = 'C:/Some/Path'
 
 # ------ Label Generator Module ---------
 genLabelsDir = 'C:/Some/Path'
+
+# ------ Annotation Plotter Module ---------
+genPlotsDir = 'C:/Some/Path'

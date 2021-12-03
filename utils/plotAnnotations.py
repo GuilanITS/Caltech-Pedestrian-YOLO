@@ -1,9 +1,34 @@
 import os
 import re
+import time
 import json
 import glob
 import cv2 as cv
+from logger import logger
 from collections import defaultdict
+from config import genLabelsDir, genImagesDir, genPlotsDir
+
+
+def annotationPlotter():
+    """
+    """
+    logger('Annotation plotter started!')
+    # Initialization
+    startTime = time.time()
+    # Check if the paths are not empty
+    if not os.path.exists(genImagesDir) or not os.listdir(genImagesDir):
+        logger('The path to the images is empty or does not exist!', logLevel="error")
+        return
+    if not os.path.exists(genLabelsDir) or not os.listdir(genLabelsDir):
+        logger('The path to the annotations is empty or does not exist!',
+               logLevel="error")
+        return
+    # Creating the output folder if it doesn't exist
+    if not os.path.exists(genPlotsDir):
+        os.makedirs(genPlotsDir)
+    # Finalization
+    elapsedTime = '{:.2f}'.format(time.time() - startTime)
+    logger(f'Annotations plotted in {elapsedTime}s!')
 
 # genImagesDir = 'E:/Datasets/Dataset 19 - Caltech/set00_images'
 # annotations = json.load(open('data/annotations.json'))

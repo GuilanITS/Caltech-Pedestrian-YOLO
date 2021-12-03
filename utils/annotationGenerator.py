@@ -101,4 +101,4 @@ def annotationGenerator():
         dataset.close()
     elapsedTime = '{:.2f}'.format(time.time() - startTime)
     logger(
-        f'Generated annotations for {vbbFile} in {elapsedTime}s!')
+        f'Generated annotations in {elapsedTime}s!')
