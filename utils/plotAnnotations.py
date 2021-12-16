@@ -4,8 +4,8 @@ import time
 import json
 import glob
 import cv2 as cv
+import pandas as pd
 from logger import logger
-from collections import defaultdict
 from config import genLabelsDir, genImagesDir, genPlotsDir
 
 
@@ -15,7 +15,7 @@ def annotationPlotter():
     logger('Annotation plotter started!')
     # Initialization
     startTime = time.time()
-    plotDict = defaultdict(dict)
+    framesDataFrame = pd.DataFrame(columns=['Set', 'VideoId', 'FrameId'])
     # Check if the paths are not empty
     if not os.path.exists(genImagesDir) or not os.listdir(genImagesDir):
         logger('The path to the images is empty or does not exist!', logLevel="error")
@@ -27,27 +27,30 @@ def annotationPlotter():
     # Creating the output folder if it doesn't exist
     if not os.path.exists(genPlotsDir):
         os.makedirs(genPlotsDir)
-    # Get the list of sets
-    for set in sorted(glob.glob(f'{genImagesDir}/*')):
-        # Get the folders (sets) containing PNG images
-        setName = os.path.basename(set)
-        # Updating plot to {'set00': {...}, 'set01': {...}}
-        plotDict[setName] = defaultdict(dict)
-    print(plotDict)
+    # Get the list of sets and images
+    for counter, image in enumerate(sorted(glob.glob(f'{genImagesDir}/*/*.png'))):
+        setName = re.search('(set[0-9]+)', image).groups()[0]
+        videoId = re.search('(V[0-9]+)', image).groups()[0]
+        frameId = re.search('_([0-9]+)\.png', image).groups()[0]
+        # Add to dataframe
+        framesDataFrame = framesDataFrame.append(
+            {'Set': setName, 'VideoId': videoId, 'FrameId': frameId}, ignore_index=True)
+        # Adding a log
+        if (counter % 500) == 0:
+            print(f'Processed {setName} {videoId} frame#{frameId}...')
+    # Processing dataframe
+    # 1) Sorting
+    framesDataFrame['FrameId'] = framesDataFrame['FrameId'].astype(int)
+    framesDataFrame = framesDataFrame.sort_values(
+        by=['Set', 'VideoId', 'FrameId'])
+    framesDataFrame['FrameId'] = framesDataFrame['FrameId'].astype(str)
+    # 2) Groupping
+    framesDataFrame = framesDataFrame.groupby(['Set', 'VideoId'])[
+        'FrameId'].apply(list)
+    print(framesDataFrame)
     # Finalization
     elapsedTime = '{:.2f}'.format(time.time() - startTime)
     logger(f'Annotations plotted in {elapsedTime}s!')
-
-# for fn in sorted(glob.glob(f'{genImagesDir}/*.png')):
-#     set_name = re.search('(set[0-9]+)', fn).groups()[0]
-#     video_name = re.search('(V[0-9]+)', fn).groups()[0]
-#     img_fns[set_name][video_name] = []
-
-# for fn in sorted(glob.glob(f'{genImagesDir}/*.png')):
-#     set_name = re.search('(set[0-9]+)', fn).groups()[0]
-#     video_name = re.search('(V[0-9]+)', fn).groups()[0]
-#     n_frame = re.search('_([0-9]+)\.png', fn).groups()[0]
-#     img_fns[set_name][video_name].append((int(n_frame), fn))
 
 # n_objects = 0
 # for set_name in sorted(img_fns.keys()):
