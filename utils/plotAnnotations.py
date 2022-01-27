@@ -15,7 +15,8 @@ def annotationPlotter():
     logger('Annotation plotter started!')
     # Initialization
     startTime = time.time()
-    framesDataFrame = pd.DataFrame(columns=['Set', 'VideoId', 'FrameId'])
+    framesDataFrame = pd.DataFrame(
+        columns=['Set', 'VideoId', 'FrameId', 'Labels'])
     # Check if the paths are not empty
     if not os.path.exists(genImagesDir) or not os.listdir(genImagesDir):
         logger('The path to the images is empty or does not exist!', logLevel="error")
@@ -27,14 +28,29 @@ def annotationPlotter():
     # Creating the output folder if it doesn't exist
     if not os.path.exists(genPlotsDir):
         os.makedirs(genPlotsDir)
-    # Get the list of sets and images
+    # Get the list of sets and images to create framesDataFrame
     for counter, image in enumerate(sorted(glob.glob(f'{genImagesDir}/*/*.png'))):
         setName = re.search('(set[0-9]+)', image).groups()[0]
         videoId = re.search('(V[0-9]+)', image).groups()[0]
         frameId = re.search('_([0-9]+)\.png', image).groups()[0]
+        # Process labels
+        labels = []
+        txtFilePath = f'{genLabelsDir}/{setName}/{videoId}_frame{frameId}.txt'
+        if os.path.exists(txtFilePath):
+            txtFile = open(txtFilePath, 'r')
+            lines = txtFile.readlines()
+            for line in lines:
+                # Remove \n from the end of the line
+                line = line.rstrip()
+                # Fetches the labels stored in lines
+                splittedLine = line.split(' ')
+                classId = splittedLine[0]
+                coordinates = splittedLine[1:]
+                labels.append({'classId': classId, 'coordinates': coordinates})
+            txtFile.close()
         # Add to dataframe
         framesDataFrame = framesDataFrame.append(
-            {'Set': setName, 'VideoId': videoId, 'FrameId': frameId}, ignore_index=True)
+            {'Set': setName, 'VideoId': videoId, 'FrameId': frameId, 'Labels': labels}, ignore_index=True)
         # Adding a log
         if (counter % 500) == 0:
             print(f'Processed {setName} {videoId} frame#{frameId}...')
