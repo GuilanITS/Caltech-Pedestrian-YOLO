@@ -1,9 +1,7 @@
 import os
 import re
 import time
-import json
 import glob
-import cv2 as cv
 import pandas as pd
 from logger import logger
 from config import genLabelsDir, genImagesDir, genPlotsDir
@@ -11,6 +9,7 @@ from config import genLabelsDir, genImagesDir, genPlotsDir
 
 def annotationPlotter():
     """
+    Plots the annotations of the generated images.
     """
     logger('Annotation plotter started!')
     # Initialization
