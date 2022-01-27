@@ -8,6 +8,16 @@ from logger import logger
 from config import genLabelsDir, genImagesDir, genPlotsDir, frameSize
 
 
+def convertToBoundingBox(x, y, w, h):
+    left, top, width, height = float(x), float(y), float(w), float(h)
+    (imageWidth, imageHeight) = frameSize
+    x = (left + width / 2.0) * imageWidth
+    y = (top + height / 2.0) * imageHeight
+    w = width * imageWidth
+    h = height * imageHeight
+    return (round(x), round(y), round(w), round(h))
+
+
 def annotationPlotter():
     """
     Plots the annotations of the generated images.
@@ -77,8 +87,7 @@ def annotationPlotter():
             # Add annotations if there are any
             for label in labels:
                 x, y, w, h = label['coordinates']
-                x, y, w, h = round(float(x)), round(
-                    float(y)), round(float(w)), round(float(h))
+                x, y, w, h = convertToBoundingBox(x, y, w, h)
                 # Set different colors for different classes
                 color = (0, 255, 0) if label['classId'] == '0' else (255, 0, 0)
                 # Draw the rectangle and the text
