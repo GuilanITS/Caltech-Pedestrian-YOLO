@@ -11,8 +11,8 @@ from config import genLabelsDir, genImagesDir, genPlotsDir, frameSize
 def convertToBoundingBox(x, y, w, h):
     left, top, width, height = float(x), float(y), float(w), float(h)
     (imageWidth, imageHeight) = frameSize
-    x = (left + width / 2.0) * imageWidth
-    y = (top + height / 2.0) * imageHeight
+    x = (left - width / 2.0) * imageWidth
+    y = (top - height / 2.0) * imageHeight
     w = width * imageWidth
     h = height * imageHeight
     return (round(x), round(y), round(w), round(h))
@@ -93,7 +93,7 @@ def annotationPlotter():
                 # Draw the rectangle and the text
                 cv.rectangle(frame, (x, y), (x + w, y + h), color, 2)
                 cv.putText(frame, label['classId'], (x, y),
-                           cv.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+                           cv.FONT_HERSHEY_COMPLEX_SMALL, 0.5, color, 2)
             videoWrither.write(frame)
         videoWrither.release()
     # Finalization
