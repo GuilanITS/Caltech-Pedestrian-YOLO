@@ -3,11 +3,10 @@ import time
 from glob import glob
 from logger import logger
 from scipy.io import loadmat
-from config import genLabelsDir, caltechLabelsDir, genImagesDir, imageFormat
+from config import genLabelsDir, caltechLabelsDir, genImagesDir, imageFormat, frameSize
 
 
 classes = ['person', 'people']  # Classes in Caltech Pedestrian dataset
-frameSize = (640, 480)  # Resolution of files in Caltech Pedestrian dataset
 
 
 def convertBoxFormat(box):

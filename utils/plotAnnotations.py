@@ -5,7 +5,7 @@ import glob
 import cv2 as cv
 import pandas as pd
 from logger import logger
-from config import genLabelsDir, genImagesDir, genPlotsDir
+from config import genLabelsDir, genImagesDir, genPlotsDir, frameSize
 
 
 def annotationPlotter():
@@ -60,42 +60,33 @@ def annotationPlotter():
     framesDataFrame = framesDataFrame.sort_values(
         by=['Set', 'VideoId', 'FrameId'])
     framesDataFrame['FrameId'] = framesDataFrame['FrameId'].astype(str)
-    # 2) Groupping
-    framesDataFrame = framesDataFrame.groupby(['Set', 'VideoId'])[
+    # 2) Groupping into a dictionary
+    framesDict = framesDataFrame.groupby(['Set', 'VideoId'])[
         'FrameId'].apply(list)
     # Iterating over the dataframe
-    for counter, (setName, videoId) in enumerate(framesDataFrame.index):
+    for counter, (setName, videoId) in enumerate(framesDict.index):
         print(f'Processing {setName} {videoId}...')
-        videoName = f'{setName}_{videoId}.mp4'
         videoWrither = cv.VideoWriter(
-            f'{genPlotsDir}/{videoName}', cv.VideoWriter_fourcc(*'mp4v'), 30, (640, 480))
-        for frameId in framesDataFrame.loc[(setName, videoId)]:
+            f'{genPlotsDir}/{setName}_{videoId}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30, (640, 480))
+        for frameId in framesDict.loc[(setName, videoId)]:
             framePath = f'{genImagesDir}/{setName}/{videoId}_{frameId}.png'
             frame = cv.imread(framePath)
+            # Get the labels
+            labels = framesDataFrame.query(
+                f'Set == "{setName}" and VideoId == "{videoId}" and FrameId == "{frameId}"')['Labels'].values[0]
+            # Add annotations if there are any
+            for label in labels:
+                x, y, w, h = label['coordinates']
+                x, y, w, h = round(float(x)), round(
+                    float(y)), round(float(w)), round(float(h))
+                # Set different colors for different classes
+                color = (0, 255, 0) if label['classId'] == '0' else (255, 0, 0)
+                # Draw the rectangle and the text
+                cv.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                cv.putText(frame, label['classId'], (x, y),
+                           cv.FONT_HERSHEY_SIMPLEX, 1, color, 2)
             videoWrither.write(frame)
         videoWrither.release()
     # Finalization
     elapsedTime = '{:.2f}'.format(time.time() - startTime)
     logger(f'Annotations plotted in {elapsedTime}s!')
-
-# n_objects = 0
-# for set_name in sorted(img_fns.keys()):
-#     for video_name in sorted(img_fns[set_name].keys()):
-#         wri = cv.VideoWriter(
-#             'data/plots/{}_{}.avi'.format(set_name, video_name),
-#             cv.VideoWriter_fourcc(*'XVID'), 30, (640, 480))
-#         for frame_i, fn in sorted(img_fns[set_name][video_name]):
-#             img = cv.imread(fn)
-#             if str(frame_i) in annotations[set_name][video_name]['frames']:
-#                 data = annotations[set_name][
-#                     video_name]['frames'][str(frame_i)]
-#                 for datum in data:
-#                     x, y, w, h = [int(v) for v in datum['pos']]
-#                     cv.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 1)
-#                     n_objects += 1
-#                 wri.write(img)
-#         wri.release()
-#         print(set_name, video_name)
-# print(n_objects)
-
-# https://github.com/mitmul/caltech-pedestrian-dataset-converter/blob/master/tests/test_plot_annotations.py

@@ -5,6 +5,7 @@ caltechDataDir = 'C:/Some/Path'
 caltechLabelsDir = 'C:/Some/Path'
 
 # ------ Image Generator Module ---------
+frameSize = (640, 480)  # Resolution of files in Caltech Pedestrian dataset
 imageFormat = 'png'  # Format of the generated images (e.g., png, jpg)
 # The root folder to store generated images
 genImagesDir = 'C:/Some/Path'
