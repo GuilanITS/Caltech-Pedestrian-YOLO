@@ -1,5 +1,7 @@
 # Caltech Pedestrian to YOLO Converter
 
+![Caltech Pedestrian to Yolo Converter](Caltech_Pedestrian_Yolo_GuilanITS_Cover.png "Caltech Pedestrian to Yolo Converter")
+
 This repository provides a set of tools to prepare [Caltech Pedestrian dataset](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/ "Caltech Pedestrian dataset") to the format of YOLO object detector. The toolbox contains three main modules for preparing Caltech Pedestrian data for different versions of YOLO, described as below:
 
 - **Image Generator:** Generates a set of `.png` images from Caltech Pedestrian `.seq` files. By feeding the root directory that contains `set00X` folders in the `config` file, the process of generating images can start.
