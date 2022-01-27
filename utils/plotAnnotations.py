@@ -2,6 +2,7 @@ import os
 import re
 import time
 import glob
+import cv2 as cv
 import pandas as pd
 from logger import logger
 from config import genLabelsDir, genImagesDir, genPlotsDir
@@ -46,7 +47,17 @@ def annotationPlotter():
     # 2) Groupping
     framesDataFrame = framesDataFrame.groupby(['Set', 'VideoId'])[
         'FrameId'].apply(list)
-    print(framesDataFrame)
+    # Iterating over the dataframe
+    for counter, (setName, videoId) in enumerate(framesDataFrame.index):
+        print(f'Processing {setName} {videoId}...')
+        videoName = f'{setName}_{videoId}.mp4'
+        videoWrither = cv.VideoWriter(
+            f'{genPlotsDir}/{videoName}', cv.VideoWriter_fourcc(*'mp4v'), 30, (640, 480))
+        for frameId in framesDataFrame.loc[(setName, videoId)]:
+            framePath = f'{genImagesDir}/{setName}/{videoId}_{frameId}.png'
+            frame = cv.imread(framePath)
+            videoWrither.write(frame)
+        videoWrither.release()
     # Finalization
     elapsedTime = '{:.2f}'.format(time.time() - startTime)
     logger(f'Annotations plotted in {elapsedTime}s!')
