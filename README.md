@@ -1,10 +1,10 @@
 # Caltech Pedestrian to YOLO Converter
 
-This repository provides a set of tools to prepare [Caltech Pedestrian dataset](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/ "Caltech Pedestrian dataset") to the format of YOLO object detector. The toolbox contains three main modules for preparing Caltech Pedestrian data for YOLO, described as below:
+This repository provides a set of tools to prepare [Caltech Pedestrian dataset](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/ "Caltech Pedestrian dataset") to the format of YOLO object detector. The toolbox contains three main modules for preparing Caltech Pedestrian data for different versions of YOLO, described as below:
 
 - **Image Generator:** Generates a set of `.png` images from Caltech Pedestrian `.seq` files. By feeding the root directory that contains `set00X` folders in the `config` file, the process of generating images can start.
 - **Annotation Generator:** Generates a set of `.txt` annotation (label) files from Caltech Pedestrian `.vbb` files.
-- **Plotter:** Draw bounding boxes using annotations on sample generated images. You need to run this module after the two above.
+- **Plot Annotations:** Draws bounding boxes using annotations on sample generated images. The output will be a video file showing the consequent frames and drawn labels. You need to run this module after the two above.
 
 Please note that set00-set05 are training data and the rest (i.e., set06-set10) are test data ([see link](http://www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/ "see link")).
 
